@@ -7,10 +7,10 @@ TARGET = main
 CXX = g++
 LD = g++
 
-CXXFLAGS = -c -Wall -g
-LDFLAGS = -L/usr/local/lib -Lutils
+CXXFLAGS = -c -Wall -g -std=c++0x -I/opt/local/include/SOIL
+LDFLAGS = -L/usr/local/lib -L/opt/local/lib
 
-LDLIBS = -lm -lglew -lglfw3 -lloadshaders -framework Cocoa -framework OpenGL -framework IOKit
+LDLIBS = -lm -lglew -lglfw3 -lSOIL -framework Cocoa -framework OpenGL -framework IOKit
 
 .PHONY: all clean
 
