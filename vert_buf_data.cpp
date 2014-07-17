@@ -299,7 +299,7 @@ Geometry GenCube()
     vert_data[4].tex_coord[0] =  1.0f; // tex coord
     vert_data[4].tex_coord[1] =  1.0f;
     vert_data[4].normal[0] =     0.0f; // normal (y)
-    vert_data[4].normal[1] =     1.0f;
+    vert_data[4].normal[1] =    -1.0f;
     vert_data[4].normal[2] =     0.0f;
     vert_data[4].binormal[0] =   0.0f; // binormal
     vert_data[4].binormal[1] =   0.0f;
