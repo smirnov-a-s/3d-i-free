@@ -1,18 +1,96 @@
 #include "object.h"
+// #include "geometry.h"
+// #include "geometry.h"
 
 #define BUFFER_OFFSET(x) ((const void*) (x))
 
-void MyObject::BindUniforms()
+// MyObject(Geometry& geom, Material& mater):
+MyObject::MyObject(const Geometry& geom, const Material& mater) :
+    geom(geom), mater(mater)
 {
-    time_id = glGetUniformLocation(prog_id, "time");
-    mat_model = glGetUniformLocation(prog_id, "modelMat");
-    mat_view = glGetUniformLocation(prog_id, "viewMat");
-    mat_proj = glGetUniformLocation(prog_id, "projMat");
-    light_pos = glGetUniformLocation(prog_id, "lightPos");
-    eye_pos = glGetUniformLocation(prog_id, "eyePos");
+    translation_matrix = glm::mat4(1.0f);
+    rotation_matrix = glm::mat4(1.0f);
+    scale_matrix = glm::mat4(1.0f);
+    model_matrix = glm::mat4(1.0f);
 }
 
-void MyObject::BindTex(const char* path)
+void MyObject::SetAttribs()
+{
+    int offset = 0;
+
+    // position
+    glVertexAttribPointer(
+        POS,
+        VERT_POS_SIZE,
+        GL_FLOAT,
+        GL_FALSE,
+        sizeof(Vertex),
+        BUFFER_OFFSET(0));
+
+    offset += VERT_POS_SIZE;
+
+    // color
+    glVertexAttribPointer(
+        COL,
+        VERT_COLOR_SIZE,
+        GL_FLOAT,
+        GL_FALSE,
+        sizeof(Vertex),
+        BUFFER_OFFSET(offset * sizeof(float)));
+
+    offset += VERT_COLOR_SIZE;
+
+    // texture coords
+    glVertexAttribPointer(
+        TEXCOORD,
+        VERT_TEX_COORD_SIZE,
+        GL_FLOAT,
+        GL_FALSE,
+        sizeof(Vertex),
+        BUFFER_OFFSET(offset * sizeof(float)));
+
+    offset += VERT_TEX_COORD_SIZE;
+
+    // normal
+    glVertexAttribPointer(
+        NORMAL,
+        VERT_NORMAL_SIZE,
+        GL_FLOAT,
+        GL_FALSE,
+        sizeof(Vertex),
+        BUFFER_OFFSET(offset * sizeof(float)));
+
+    offset += VERT_NORMAL_SIZE;
+
+    // binormal
+    glVertexAttribPointer(
+        BINORMAL,
+        VERT_BINORMAL_SIZE,
+        GL_FLOAT,
+        GL_FALSE,
+        sizeof(Vertex),
+        BUFFER_OFFSET(offset * sizeof(float)));
+
+    offset += VERT_BINORMAL_SIZE;
+
+    // tangent
+    glVertexAttribPointer(
+        TANGENT,
+        VERT_TANGENT_SIZE,
+        GL_FLOAT,
+        GL_FALSE,
+        sizeof(Vertex),
+        BUFFER_OFFSET(offset * sizeof(float)));
+
+    glEnableVertexAttribArray(POS);
+    glEnableVertexAttribArray(COL);
+    glEnableVertexAttribArray(TEXCOORD);
+    glEnableVertexAttribArray(NORMAL);
+    glEnableVertexAttribArray(BINORMAL);
+    glEnableVertexAttribArray(TANGENT);
+}
+
+void MyObject::SetTexture(const char* path)
 {
     glGenTextures(1, &tex_id);
     glBindTexture(GL_TEXTURE_2D, tex_id);
@@ -30,15 +108,52 @@ void MyObject::BindTex(const char* path)
     glGenerateMipmap(GL_TEXTURE_2D);
 }
 
+void MyObject::Translate(float tx, float ty, float tz)
+{
+    translation_matrix = glm::translate(translation_matrix, glm::vec3(tx, ty, tz));
+}
+
+void MyObject::Rotate(float angle_in_degr, RotationAxis &axis)
+{
+    switch (axis) {
+    case RotationAxis::X:
+    {
+        rotation_matrix = glm::rotate(rotation_matrix, angle_in_degr, glm::vec3(1.0f, 0.0f, 0.0f));
+    }
+    break;
+    case RotationAxis::Y:
+    {
+        rotation_matrix = glm::rotate(rotation_matrix, angle_in_degr, glm::vec3(0.0f, 1.0f, 0.0f));
+    }
+    break;
+    case RotationAxis::Z:
+    {
+        rotation_matrix = glm::rotate(rotation_matrix, angle_in_degr, glm::vec3(0.0f, 0.0f, 1.0f));
+    }
+    break;
+    }
+}
+
+void MyObject::Scale(float sx, float sy, float sz)
+{
+    scale_matrix = glm::scale(translation_matrix, glm::vec3(sx, sy, sz));
+}
+
 // uniforms?
 void MyObject::Draw()
 {
     // put somewhere else
-    glUseProgram(prog_id);
+    glUseProgram(mater.GetProgId());
 
-    // glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_id);
+    glBindBuffer(GL_ARRAY_BUFFER, geom.GetVertBufId());
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geom.GetIndBufId());
 
-    glDrawElements(GL_TRIANGLES, ebo_size, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
-    // glDrawElements(GL_TRIANGLES, ebo_size, GL_UNSIGNED_INT, 0);
+    SetAttribs();
+
+    GLuint model_matrix_id = glGetUniformLocation(mater.GetProgId(), "modelMatrix");
+    model_matrix = translation_matrix * rotation_matrix * scale_matrix;
+
+    glUniformMatrix4fv(model_matrix_id, 1, GL_FALSE, &model_matrix[0][0]);
+
+    glDrawElements(GL_TRIANGLES, geom.GetIndBufSize(), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 }

@@ -14,24 +14,28 @@ out vec3 fNormal;
 out vec3 fBinormal;
 out vec3 fTangent;
 
+// vector to light src
+out vec3 v_light;
+
 uniform float time;
 
-uniform mat4 modelMat;
-uniform mat4 viewMat;
-uniform mat4 projMat;
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projMatrix;
 
-uniform mat4 lightPos;
-uniform mat4 eyePos;
+uniform vec3 lightPos;
+uniform vec3 eyePos;
 
 void main()
 {
-        // vec3 v = vPos;
+        mat4 mvp = projMatrix * viewMatrix * modelMatrix;
+        vec4 pos = mvp * vec4(vPos, 1);
+        // vec4 normal = normalize(mvp * vec4(vNormal, 1));
 
-        // v.z *= sin(time);
-        // v.x *= cos(time);
-
-        // gl_Position =  mvp * vec4(v, 1);
-        gl_Position = vec4(vPos, 1);
+        v_light = normalize(lightPos - vec3(pos));
 
 	fTexCoord = vTexCoord;
+        fNormal = mat3(modelMatrix) * vNormal;
+
+        gl_Position = pos;
 }

@@ -1,36 +1,42 @@
+#ifndef OBJECT_H
+#define OBJECT_H
+
 #include <GL/glew.h>
 #include <SOIL.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+using namespace glm;
+
+#include "geometry.h"
+#include "material.h"
+
+enum class RotationAxis { X, Y, Z };
+
 class MyObject {
-    // handles
-    // ???
-    // GLuint vao_id;
-    // vertex buffer obj
-    GLuint vbo_id;
-    // elements buffer obj
-    GLuint ebo_id;
-    // elements buffer obj size
-    unsigned int ebo_size;
-    // shaders
-    GLuint prog_id;
-    // texture id
+    Geometry geom;
+    Material mater;
+
     GLuint tex_id;
-    // uniforms
-    // time
-    GLuint time_id;
-    // MVP
-    GLuint mat_model;
-    GLuint mat_view;
-    GLuint mat_proj;
-    // light position
-    GLuint light_pos;
-    GLuint eye_pos;
 
+    glm::mat4 translation_matrix;
+    glm::mat4 rotation_matrix;
+    glm::mat4 scale_matrix;
+    glm::mat4 model_matrix;
+
+    void SetAttribs();
 public:
-    MyObject(GLuint vbo_id, GLuint ebo_id, unsigned int ebo_size, GLuint prog_id):
-    vbo_id(vbo_id), ebo_id(ebo_id), ebo_size(ebo_size), prog_id(prog_id) {}
+    MyObject(const Geometry& geom, const Material& mater);
 
-    void BindUniforms();
-    void BindTex(const char* path);
+    GLuint GetProgId() const { return mater.GetProgId(); }
+
+    void SetTexture(const char* path);
+
+    void Translate(float tx, float ty, float tz);
+    void Rotate(float angle_in_degr, RotationAxis& axis);
+    void Scale(float sx, float sy, float sz);
+
     void Draw();
 };
+
+#endif

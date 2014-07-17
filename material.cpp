@@ -104,6 +104,6 @@ Material::Material(const char* vert_fpath, const char* frag_fpath)
         printf("%s\n", &prog_error_message[0]);
     }
 
-    // glDeleteShader(v_id);
-    // glDeleteShader(f_id);
+    glDeleteShader(v_id);
+    glDeleteShader(f_id);
 }

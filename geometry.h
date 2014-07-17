@@ -1,5 +1,5 @@
-#ifndef VERT_BUF_DATA_H
-#define VERT_BUF_DATA_H
+#ifndef GEOMETRY_H
+#define GEOMETRY_H
 
 #include <vector>
 #include <GL/glew.h>
@@ -32,22 +32,22 @@ struct Vertex {
 #pragma pack()
 
 class Geometry {
-    std::vector<Vertex> vert_data;
+    std::vector<Vertex> vert_buf;
     std::vector<unsigned int> ind_buf;
 
-    GLuint vbo_id;
-    GLuint ebo_id;
-
-public:
-    Geometry(const std::vector<Vertex>& vert_data, const std::vector<unsigned int>& ind_buf): vert_data(vert_data), ind_buf(ind_buf) {}
-    Geometry(const float* data, unsigned int num_vert, int* elems, unsigned int num_elems);
-
-    const GLuint GetVertexBufId() const { return vbo_id; }
-    const GLuint GetElemBufId() const { return ebo_id; }
-    const GLuint GetElemBufSize() const { return ind_buf.size(); }
+    GLuint vert_buf_id;
+    GLuint ind_buf_id;
 
     void LoadData();
-    void LogVertexData();
+public:
+    Geometry(const std::vector<Vertex>& vert_buf, const std::vector<unsigned int>& ind_buf);
+
+    void PrintVertData();
+
+    GLuint GetVertBufId() const { return vert_buf_id; }
+    GLuint GetIndBufId() const { return ind_buf_id; }
+
+    int GetIndBufSize() const { return ind_buf.size(); }
 };
 
 #endif

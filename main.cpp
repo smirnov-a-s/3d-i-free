@@ -6,7 +6,7 @@
 #include "material.h"
 #include "geometry.h"
 #include "object.h"
-
+#include "renderer.h"
 #include "vert_buf_data.h"
 
 #include <GLFW/glfw3.h>
@@ -20,6 +20,8 @@ using namespace glm;
 #define VSHADERPATH "shaders/vert_shader.vert"
 
 #define TEXPATH "textures/wall_512_1_05.tga"
+
+#define ROTANGLE   1.0f
 
 int main(void)
 {
@@ -70,15 +72,21 @@ int main(void)
     glBindVertexArray(vao_id);
 
     Material my_material(VSHADERPATH, FSHADERPATH);
-    Geometry rect = GenSquare();
+    // Geometry rect = GenSquare();
+    Geometry cube = GenCube();
 
-    rect.LogVertexData();
-    rect.LoadData();
+    // cube.PrintVertData();
 
-    MyObject obj(rect.GetVertexBufId(), rect.GetElemBufId(), rect.GetElemBufSize(), my_material.GetProgId());
+    // MyObject obj(rect, my_material);
+    MyObject obj(cube, my_material);
+    obj.SetTexture(TEXPATH);
 
-    obj.BindUniforms();
-    obj.BindTex(TEXPATH);
+    Renderer render;
+
+    // render.SetCamera(view, projection);
+    render.AddObject(obj);
+
+    // float angle = 0.0f;
 
     // main loop
     do {
@@ -89,11 +97,49 @@ int main(void)
         // double delta_time = cur_time - last_time;
         // last_time = cur_time;
 
-        // Send our transformation to the currently bound shader, in the "MVP" uniform
-        // glUniformMatrix4fv(matrix_id, 1, GL_FALSE, &mvp[0][0]);
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+            render.CameraMoveLeft();
+	}
 
-        // glUniform1f(time_id, cur_time);
-        obj.Draw();
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
+            render.CameraMoveRight();
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
+            render.CameraMoveForward();
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
+            render.CameraMoveBackward();
+	}
+
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+            render.ObjRotateX(ROTANGLE);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
+            render.ObjRotateY(-ROTANGLE);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
+            render.ObjRotateX(-ROTANGLE);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
+            render.ObjRotateY(ROTANGLE);
+	}
+
+        if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS){
+            render.ObjRotateZ(-ROTANGLE);
+	}
+
+        if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS){
+            render.ObjRotateZ(ROTANGLE);
+	}
+
+
+        render.SetTime(cur_time);
+        render.Render();
 
         // Swap buffers
         glfwSwapBuffers(window);
