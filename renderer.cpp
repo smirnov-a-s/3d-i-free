@@ -1,45 +1,23 @@
+#include <stdio.h>
+#include <string.h>
+
 #include "renderer.h"
 
-#include <stdio.h>
-
-// to handle key presses
-#include <GLFW/glfw3.h>
-
 #define MOVECAMERA 0.1f
+#define ROTANGLE   1.0f
 
 Renderer::Renderer()
 {
-    camera_pos = glm::vec3(4.0f, 3.0f, -3.0f);
+    camera_pos = glm::vec3(2.0f, 2.0f, 3.0f);
     camera_look_at = glm::vec3(0.0f, 0.0f, 0.0f);
     camera_head = glm::vec3(0.0f, 1.0f, 0.0f);
 
     view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
     project_matrix = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
 
-    light_pos = glm::vec3(0.5f, 0.5f, 0.5f);
-    eye_pos = glm::vec3(1.0f, 1.0f, 1.0f);
-
-    // test
-    obj_rot_angle_x = 0;
-    obj_rot_angle_y = 0;
-    obj_rot_angle_z = 0;
+    light_pos = glm::vec3(3.0f, 3.0f, 3.0f);
 
     cur_time = 0;
-}
-
-void Renderer::ObjRotateX(float angle)
-{
-    obj_rot_angle_x = angle;
-}
-
-void Renderer::ObjRotateY(float angle)
-{
-    obj_rot_angle_y = angle;
-}
-
-void Renderer::ObjRotateZ(float angle)
-{
-    obj_rot_angle_z = angle;
 }
 
 void Renderer::SetCamera(const glm::mat4& view_matrix, const glm::mat4& project_matrix)
@@ -81,9 +59,11 @@ void Renderer::SetLightPos(float x, float y, float z)
 
 void Renderer::SetEyePos(float x, float y, float z)
 {
-    eye_pos.x = x;
-    eye_pos.y = y;
-    eye_pos.z = z;
+    camera_pos.x = x;
+    camera_pos.y = y;
+    camera_pos.z = z;
+
+    view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
 }
 
 void Renderer::SetTime(double time)
@@ -110,6 +90,56 @@ void Renderer::AddObject(const MyObject &obj)
 // uniform mat4 lightPos;
 // uniform mat4 eyePos;
 
+void Renderer::ObjRotateLeft(const char *name)
+{
+    for (auto &o : objects) {
+        if (strcmp(name, o.GetName()) == 0) {
+            RotationAxis axis = RotationAxis::Y;
+            o.Rotate(-ROTANGLE, axis);
+        }
+    }
+}
+
+void Renderer::ObjResetRotationMatrix(const char *name)
+{
+    for (auto &o : objects) {
+        if (strcmp(name, o.GetName()) == 0) {
+            glm::mat4 tmp = glm::mat4(1.0f);
+            o.SetRotationMatrix(tmp);
+        }
+    }
+}
+
+void Renderer::ObjRotateRight(const char *name)
+{
+    for (auto &o : objects) {
+        if (strcmp(name, o.GetName()) == 0) {
+            RotationAxis axis = RotationAxis::Y;
+            o.Rotate(ROTANGLE, axis);
+        }
+    }
+}
+
+void Renderer::ObjRotateUp(const char *name)
+{
+    for (auto &o : objects) {
+        if (strcmp(name, o.GetName()) == 0) {
+            RotationAxis axis = RotationAxis::X;
+            o.Rotate(-ROTANGLE, axis);
+        }
+    }
+}
+
+void Renderer::ObjRotateDown(const char *name)
+{
+    for (auto &o : objects) {
+        if (strcmp(name, o.GetName()) == 0) {
+            RotationAxis axis = RotationAxis::X;
+            o.Rotate(ROTANGLE, axis);
+        }
+    }
+}
+
 void Renderer::Render()
 {
     for (auto &o : objects) {
@@ -126,23 +156,8 @@ void Renderer::Render()
         glUniformMatrix4fv(view_matrix_id, 1, GL_FALSE, &view_matrix[0][0]);
         glUniformMatrix4fv(proj_matrix_id, 1, GL_FALSE, &project_matrix[0][0]);
 
-        light_pos = camera_pos;
-
         glUniform3fv(light_pos_id, 1, &light_pos[0]);
-        glUniform3fv(eye_pos_id, 1, &eye_pos[0]);
-
-        RotationAxis axis = RotationAxis::X;
-        o.Rotate(obj_rot_angle_x, axis);
-
-        axis = RotationAxis::Y;
-        o.Rotate(obj_rot_angle_y, axis);
-
-        axis = RotationAxis::Z;
-        o.Rotate(obj_rot_angle_z, axis);
-
-        obj_rot_angle_x = 0.0f;
-        obj_rot_angle_y = 0.0f;
-        obj_rot_angle_z = 0.0f;
+        glUniform3fv(eye_pos_id, 1, &camera_pos[0]);
 
         o.Draw();
     }

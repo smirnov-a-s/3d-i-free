@@ -30,7 +30,6 @@ void main()
 {
         mat4 mvp = projMatrix * viewMatrix * modelMatrix;
         vec4 pos = mvp * vec4(vPos, 1);
-        // vec4 normal = normalize(mvp * vec4(vNormal, 1));
 
         v_light = normalize(lightPos - vec3(pos));
 

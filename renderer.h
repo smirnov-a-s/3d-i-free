@@ -14,14 +14,9 @@ class Renderer {
     glm::mat4 project_matrix;
 
     glm::vec3 light_pos;
-    glm::vec3 eye_pos;
 
     double cur_time;
 
-    // test
-    float obj_rot_angle_x;
-    float obj_rot_angle_y;
-    float obj_rot_angle_z;
 public:
     Renderer();
     void SetCamera(const glm::mat4& view_matrix, const glm::mat4& project_matrix);
@@ -40,10 +35,13 @@ public:
     void CameraMoveForward();
     void CameraMoveBackward();
 
-    // test
-    void ObjRotateX(float angle);
-    void ObjRotateY(float angle);
-    void ObjRotateZ(float angle);
+    void ObjRotateLeft(const char* name);
+    void ObjRotateRight(const char* name);
+    void ObjRotateUp(const char* name);
+    void ObjRotateDown(const char* name);
+
+    // reset rotation
+    void ObjResetRotationMatrix(const char* name);
 };
 
 #endif

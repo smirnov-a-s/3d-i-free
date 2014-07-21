@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "object.h"
 // #include "geometry.h"
 // #include "geometry.h"
@@ -5,13 +6,17 @@
 #define BUFFER_OFFSET(x) ((const void*) (x))
 
 // MyObject(Geometry& geom, Material& mater):
-MyObject::MyObject(const Geometry& geom, const Material& mater) :
-    geom(geom), mater(mater)
+MyObject::MyObject(const char* name, const Geometry& geom, const Material& mater) :
+    name(name), geom(geom), mater(mater)
 {
     translation_matrix = glm::mat4(1.0f);
     rotation_matrix = glm::mat4(1.0f);
     scale_matrix = glm::mat4(1.0f);
     model_matrix = glm::mat4(1.0f);
+
+    x_rot_ang = 0.0f;
+    y_rot_ang = 0.0f;
+    z_rot_ang = 0.0f;
 }
 
 void MyObject::SetAttribs()
@@ -118,11 +123,33 @@ void MyObject::Rotate(float angle_in_degr, RotationAxis &axis)
     switch (axis) {
     case RotationAxis::X:
     {
+        // glm::vec4 tmp = rotation_matrix * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+        // tmp = glm::normalize(tmp);
         rotation_matrix = glm::rotate(rotation_matrix, angle_in_degr, glm::vec3(1.0f, 0.0f, 0.0f));
     }
     break;
     case RotationAxis::Y:
     {
+        // rotation_matrix = glm::mat4(1.0f);
+
+        // y_rot_ang += angle_in_degr;
+        // if (abs(y_rot_ang) >= 90.0f) {
+        //     y_rot_ang = 0.0f;
+        // }
+
+        // printf("%f\n", &rotation_matrix[0][0]);
+        // printf("%f\n", y_rot_ang);
+
+        // glm::vec4 tmp = rotation_matrix * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+        // tmp = glm::normalize(tmp);
+
+        // float p = glm::dot(vec3(tmp), vec3(1.0f, 0.0f, 0.0f));
+        // printf("%f\n", p);
+        // if (p - 0.0000001 < 0.0f) {
+        //     printf("%f\n", p);
+        //     rotation_matrix = glm::mat4(1.0f);
+        // }
+
         rotation_matrix = glm::rotate(rotation_matrix, angle_in_degr, glm::vec3(0.0f, 1.0f, 0.0f));
     }
     break;
@@ -133,6 +160,14 @@ void MyObject::Rotate(float angle_in_degr, RotationAxis &axis)
     break;
     }
 }
+
+void MyObject::Rotate(float angle_in_degr, glm::vec3& axis)
+{
+    // glm::vec4 tmp = view * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+
+    rotation_matrix = glm::rotate(rotation_matrix, angle_in_degr, axis);
+}
+
 
 void MyObject::Scale(float sx, float sy, float sz)
 {

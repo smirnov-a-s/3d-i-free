@@ -16,8 +16,8 @@ GLFWwindow* window;
 #include <glm/gtc/matrix_transform.hpp>
 using namespace glm;
 
-#define FSHADERPATH "shaders/frag_shader.frag"
-#define VSHADERPATH "shaders/vert_shader.vert"
+#define VSHADERPATH "shaders/bump.vert"
+#define FSHADERPATH "shaders/bump.frag"
 
 #define TEXPATH "textures/wall_512_1_05.tga"
 
@@ -78,7 +78,7 @@ int main(void)
     // cube.PrintVertData();
 
     // MyObject obj(rect, my_material);
-    MyObject obj(cube, my_material);
+    MyObject obj("cube", cube, my_material);
     obj.SetTexture(TEXPATH);
 
     Renderer render;
@@ -98,45 +98,49 @@ int main(void)
         // last_time = cur_time;
 
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-            render.CameraMoveLeft();
+            // render.CameraMoveLeft();
+            render.ObjRotateLeft("cube");
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
-            render.CameraMoveRight();
+            render.ObjRotateRight("cube");
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
-            render.CameraMoveForward();
+            render.ObjRotateUp("cube");
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
-            render.CameraMoveBackward();
+            render.ObjRotateDown("cube");
 	}
 
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-            render.ObjRotateX(ROTANGLE);
+        if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS){
+            render.ObjResetRotationMatrix("cube");
 	}
 
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
-            render.ObjRotateY(-ROTANGLE);
-	}
+        // if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        //     render.ObjRotateX(ROTANGLE);
+	// }
 
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
-            render.ObjRotateX(-ROTANGLE);
-	}
+	// if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
+        //     render.ObjRotateY(-ROTANGLE);
+	// }
 
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
-            render.ObjRotateY(ROTANGLE);
-	}
+	// if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
+        //     render.ObjRotateX(-ROTANGLE);
+	// }
 
-        if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS){
-            render.ObjRotateZ(-ROTANGLE);
-	}
+	// if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
+        //     render.ObjRotateY(ROTANGLE);
+	// }
 
-        if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS){
-            render.ObjRotateZ(ROTANGLE);
-	}
+        // if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS){
+        //     render.ObjRotateZ(-ROTANGLE);
+	// }
 
+        // if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS){
+        //     render.ObjRotateZ(ROTANGLE);
+	// }
 
         render.SetTime(cur_time);
         render.Render();
@@ -151,7 +155,8 @@ int main(void)
     // cleanup VBO and shader
     // glDeleteBuffers(1, &buffer_data_id);
     // glDeleteProgram(program_id);
-    // glDeleteVertexArrays(1, &vao_id);
+
+    glDeleteVertexArrays(1, &vao_id);
 
     // Close OpenGL window and terminate GLFW
     glfwTerminate();
