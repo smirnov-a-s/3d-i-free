@@ -10,12 +10,16 @@ class Renderer {
     glm::vec3 camera_look_at;
     glm::vec3 camera_head;
 
+    float y_rot_angle;
+    glm::mat4 rotation_matrix;
+
     glm::mat4 view_matrix;
     glm::mat4 project_matrix;
 
     glm::vec3 light_pos;
 
     double cur_time;
+    double delta_time;
 
 public:
     Renderer();
@@ -30,10 +34,13 @@ public:
     void Render();
 
     // moving is wrong (but it moves)
+    void ResetCamera();
     void CameraMoveLeft();
     void CameraMoveRight();
     void CameraMoveForward();
     void CameraMoveBackward();
+    void CameraMoveUp();
+    void CameraMoveDown();
 
     void ObjRotateLeft(const char* name);
     void ObjRotateRight(const char* name);

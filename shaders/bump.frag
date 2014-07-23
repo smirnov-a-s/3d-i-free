@@ -19,21 +19,25 @@ uniform vec3 eyePos;
 
 uniform sampler2D myTextureSampler;
 
-#define SPECPOW 0.5
+#define SPECPOW 35.0
 
 void main()
 {
         vec3 normal = 2.0 * texture(myTextureSampler, fTexCoord).rgb - 1.0;
+
         normal = normalize(normal);
 
         float lambert = max(dot(normal, v_light), 0.0);
+        // float lambert = max(dot(fNormal, v_light), 0.0);
 
         float blinn = dot(v_light, normalize(v_eye + fNormal));
+
         float phong = dot(v_light, reflect(-v_eye, normal));
 
         float spec = pow(max(phong, 0), SPECPOW);
 
-        color = texture(myTextureSampler, fTexCoord).rgb;
+        // color = texture(myTextureSampler, fTexCoord).rgb;
+        color = vec3(1.0, 0.0, 0.1);
 
         color *= lambert;
         color += spec;

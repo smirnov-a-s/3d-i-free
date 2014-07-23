@@ -104,6 +104,12 @@ void MyObject::SetTexture(const char* path)
     // unsigned char* image = SOIL_load_image(TEXPATH, &width, &height, &channels, SOIL_LOAD_L);
     unsigned char* image = SOIL_load_image(path, &width, &height, &channels, SOIL_LOAD_AUTO);
 
+    // GLuint tex_2d = SOIL_load_OGL_texture(path,
+    //     	SOIL_LOAD_AUTO,
+    //     	SOIL_CREATE_NEW_ID,
+    //     	SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+    //     );
+
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

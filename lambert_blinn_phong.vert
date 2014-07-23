@@ -29,15 +29,20 @@ uniform vec3 eyePos;
 
 void main()
 {
-        mat4 mv = viewMatrix * modelMatrix;
+        mat4 mvp = projMatrix * viewMatrix * modelMatrix;
+        mat4 mvp1 = viewMatrix * modelMatrix;
 
-        vec4 pos = mv * vec4(vPos, 1);
+        vec4 pos = mvp * vec4(vPos, 1);
 
-        v_light = normalize(lightPos - vec3(pos));
-        v_eye = normalize(eyePos - vec3(pos));
+        vec4 p = mvp1 * vec4(vPos, 1);
+
+        v_light = normalize(lightPos - vec3(p));
+        v_eye = normalize(eyePos - vec3(p));
 
 	fTexCoord = vTexCoord;
+        // fNormal = mat3(modelMatrix) * vNormal;
         fNormal = normalize(vec3(modelMatrix * vec4(vNormal, 0)));
+        // fNormal = mat3(modelMatrix[0].xyz, modelMatrix[1].xyz, modelMatrix[2].xyz) * vNormal;
 
-        gl_Position = projMatrix * pos;
+        gl_Position = pos;
 }

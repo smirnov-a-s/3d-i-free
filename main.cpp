@@ -19,7 +19,14 @@ using namespace glm;
 #define VSHADERPATH "shaders/bump.vert"
 #define FSHADERPATH "shaders/bump.frag"
 
-#define TEXPATH "textures/wall_512_1_05.tga"
+// #define VSHADERPATH "shaders/lambert_blinn_phong.vert"
+// #define FSHADERPATH "shaders/lambert_blinn_phong.frag"
+
+// #define TEXPATH "textures/wall_512_1_05.tga"
+
+// #define TEXPATH "textures/coin1.jpg"
+#define TEXPATH "textures/coin2.png"
+// #define TEXPATH "textures/metal.png"
 
 #define ROTANGLE   1.0f
 
@@ -94,6 +101,8 @@ int main(void)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         double cur_time = glfwGetTime();
+
+        render.SetTime(cur_time);
         // double delta_time = cur_time - last_time;
         // last_time = cur_time;
 
@@ -115,32 +124,33 @@ int main(void)
 	}
 
         if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS){
+            render.ResetCamera();
             render.ObjResetRotationMatrix("cube");
 	}
 
-        // if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        //     render.ObjRotateX(ROTANGLE);
-	// }
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+            render.CameraMoveForward();
+	}
 
-	// if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
-        //     render.ObjRotateY(-ROTANGLE);
-	// }
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+            render.CameraMoveLeft();
+	}
 
-	// if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
-        //     render.ObjRotateX(-ROTANGLE);
-	// }
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
+            render.CameraMoveBackward();
+	}
 
-	// if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
-        //     render.ObjRotateY(ROTANGLE);
-	// }
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
+            render.CameraMoveRight();
+	}
 
-        // if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS){
-        //     render.ObjRotateZ(-ROTANGLE);
-	// }
+        if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS){
+            render.CameraMoveUp();
+	}
 
-        // if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS){
-        //     render.ObjRotateZ(ROTANGLE);
-	// }
+        if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS){
+            render.CameraMoveDown();
+	}
 
         render.SetTime(cur_time);
         render.Render();

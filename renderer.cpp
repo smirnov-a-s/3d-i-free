@@ -8,16 +8,34 @@
 
 Renderer::Renderer()
 {
-    camera_pos = glm::vec3(2.0f, 2.0f, 3.0f);
+    camera_pos = glm::vec3(0.0f, 0.0f, 5.0f);
+
     camera_look_at = glm::vec3(0.0f, 0.0f, 0.0f);
     camera_head = glm::vec3(0.0f, 1.0f, 0.0f);
+
+    rotation_matrix = glm::mat4(1.0f);
+    y_rot_angle = 0.0f;
 
     view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
     project_matrix = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
 
-    light_pos = glm::vec3(3.0f, 3.0f, 3.0f);
+    light_pos = glm::vec3(0.0f, 0.0f, 5.0f);
 
     cur_time = 0;
+    delta_time = 0;
+}
+
+void Renderer::ResetCamera()
+{
+    camera_pos = glm::vec3(0.0f, 0.0f, 5.0f);
+
+    camera_look_at = glm::vec3(0.0f, 0.0f, 0.0f);
+    camera_head = glm::vec3(0.0f, 1.0f, 0.0f);
+
+    rotation_matrix = glm::mat4(1.0f);
+
+    view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
+    project_matrix = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
 }
 
 void Renderer::SetCamera(const glm::mat4& view_matrix, const glm::mat4& project_matrix)
@@ -28,25 +46,45 @@ void Renderer::SetCamera(const glm::mat4& view_matrix, const glm::mat4& project_
 
 void Renderer::CameraMoveLeft()
 {
-    camera_pos.x -= MOVECAMERA;
+    rotation_matrix = glm::rotate(glm::mat4(1.0f), -ROTANGLE, vec3(0.0f, 1.0f, 0.0f));
+    glm::vec4 tmp = glm::vec4(camera_pos, 1.0f);
+    tmp = tmp * rotation_matrix;
+    camera_pos = glm::vec3(tmp);
     view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
 }
 
 void Renderer::CameraMoveRight()
 {
-    camera_pos.x += MOVECAMERA;
+    rotation_matrix = glm::rotate(glm::mat4(1.0f), ROTANGLE, vec3(0.0f, 1.0f, 0.0f));
+    glm::vec4 tmp = glm::vec4(camera_pos, 1.0f);
+    tmp = tmp * rotation_matrix;
+    camera_pos = glm::vec3(tmp);
+    view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
+}
+
+void Renderer::CameraMoveUp()
+{
+    if (camera_pos.y >= -10.0f)
+        camera_pos.y -= MOVECAMERA;
+    view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
+}
+
+void Renderer::CameraMoveDown()
+{
+    if (camera_pos.y <= 10.0f)
+        camera_pos.y += MOVECAMERA;
     view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
 }
 
 void Renderer::CameraMoveForward()
 {
-    camera_pos.z += MOVECAMERA;
+    camera_pos.z -= MOVECAMERA;
     view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
 }
 
 void Renderer::CameraMoveBackward()
 {
-    camera_pos.z -= MOVECAMERA;
+    camera_pos.z += MOVECAMERA;
     view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
 }
 
@@ -68,6 +106,7 @@ void Renderer::SetEyePos(float x, float y, float z)
 
 void Renderer::SetTime(double time)
 {
+    delta_time = time - cur_time;
     cur_time = time;
 }
 

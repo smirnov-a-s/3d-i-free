@@ -29,30 +29,31 @@ uniform vec3 eyePos;
 
 void main()
 {
-        mat4 mvp = projMatrix * viewMatrix * modelMatrix;
-        vec4 pos = mvp * vec4(vPos, 1);
+        mat4 mv = viewMatrix * modelMatrix;
+
+        vec4 pos = mv * vec4(vPos, 1);
 
         v_light = normalize(lightPos - vec3(pos));
         v_eye = normalize(eyePos - vec3(pos));
 
-        fNormal = mat3(modelMatrix) * vNormal;
-        fBinormal = mat3(modelMatrix) * vBinormal;
-        fTangent = mat3(modelMatrix) * vTangent;
+        fNormal = normalize(vec3(modelMatrix * vec4(vNormal, 0)));
+        fBinormal = normalize(vec3(modelMatrix * vec4(vBinormal, 0)));
+        fTangent = normalize(vec3(modelMatrix * vec4(vTangent, 0)));
 
-        vec3 v;
-	v.x = dot(v_light, fTangent);
-	v.y = dot(v_light, fBinormal);
-	v.z = dot(v_light, fNormal);
+        mat3 tbn = mat3
+                (
+                        fTangent.x,  fTangent.y,  fTangent.z,
+                        fBinormal.x, fBinormal.y, fBinormal.z,
+                        fNormal.x,   fNormal.y,   fNormal.z
+                );
 
-	v_light = normalize(v);
 
-        // v.x = dot(v_eye, fTangent);
-        // v.y = dot(v_eye, fBinormal);
-	// v.z = dot(v_eye, fNormal);
-
-	// v_eye = normalize(v);
+        // v_light = normalize(tbn * v_light);
+	// v_eye = normalize(tbn * v_eye);
+        v_light = normalize(v_light * tbn);
+	v_eye = normalize(v_eye * tbn);
 
         fTexCoord = vTexCoord;
 
-        gl_Position = pos;
+        gl_Position = projMatrix * pos;
 }
