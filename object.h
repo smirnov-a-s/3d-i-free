@@ -20,6 +20,8 @@ class MyObject {
     Geometry geom;
     Material mater;
 
+    std::vector<GLuint> textures;
+
     GLuint tex_id;
 
     glm::mat4 translation_matrix;
@@ -41,6 +43,7 @@ public:
     GLuint GetProgId() const { return mater.GetProgId(); }
 
     void SetTexture(const char* path);
+    void AddTexture(const char* path);
 
     void Translate(float tx, float ty, float tz);
     void Rotate(float angle_in_degr, RotationAxis& axis);

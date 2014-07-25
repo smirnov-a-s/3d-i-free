@@ -1,11 +1,8 @@
 #include <stdio.h>
 #include "object.h"
-// #include "geometry.h"
-// #include "geometry.h"
 
 #define BUFFER_OFFSET(x) ((const void*) (x))
 
-// MyObject(Geometry& geom, Material& mater):
 MyObject::MyObject(const char* name, const Geometry& geom, const Material& mater) :
     name(name), geom(geom), mater(mater)
 {
@@ -17,6 +14,11 @@ MyObject::MyObject(const char* name, const Geometry& geom, const Material& mater
     x_rot_ang = 0.0f;
     y_rot_ang = 0.0f;
     z_rot_ang = 0.0f;
+
+    int tex = 0;
+    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &tex);
+
+    printf("max tex = %d\n", tex);
 }
 
 void MyObject::SetAttribs()
@@ -101,14 +103,8 @@ void MyObject::SetTexture(const char* path)
     glBindTexture(GL_TEXTURE_2D, tex_id);
 
     int width, height, channels;
-    // unsigned char* image = SOIL_load_image(TEXPATH, &width, &height, &channels, SOIL_LOAD_L);
+    // unsigned char* image = SOIL_load_image(path, &width, &height, &channels, SOIL_LOAD_L);
     unsigned char* image = SOIL_load_image(path, &width, &height, &channels, SOIL_LOAD_AUTO);
-
-    // GLuint tex_2d = SOIL_load_OGL_texture(path,
-    //     	SOIL_LOAD_AUTO,
-    //     	SOIL_CREATE_NEW_ID,
-    //     	SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
-    //     );
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 
@@ -117,6 +113,29 @@ void MyObject::SetTexture(const char* path)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glGenerateMipmap(GL_TEXTURE_2D);
+}
+
+void MyObject::AddTexture(const char* path)
+{
+    GLuint id;
+    glGenTextures(1, &id);
+    glBindTexture(GL_TEXTURE_2D, id);
+
+    int width, height, channels;
+    // unsigned char* image = SOIL_load_image(path, &width, &height, &channels, SOIL_LOAD_L);
+    unsigned char* image = SOIL_load_image(path, &width, &height, &channels, SOIL_LOAD_AUTO);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    textures.push_back(id);
+
+    SOIL_free_image_data(image);
 }
 
 void MyObject::Translate(float tx, float ty, float tz)
@@ -185,6 +204,31 @@ void MyObject::Draw()
 {
     // put somewhere else
     glUseProgram(mater.GetProgId());
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, textures[0]);
+
+    GLuint id = glGetUniformLocation(mater.GetProgId(), "texture0");
+    // glUniform1i(id, textures[0]);
+    glUniform1i(id, 0);
+
+    glActiveTexture(GL_TEXTURE0 + 1);
+    glBindTexture(GL_TEXTURE_2D, textures[1]);
+
+    id = glGetUniformLocation(mater.GetProgId(), "texture1");
+    glUniform1i(id, 1);
+
+    glActiveTexture(GL_TEXTURE0 + 2);
+    glBindTexture(GL_TEXTURE_2D, textures[2]);
+
+    id = glGetUniformLocation(mater.GetProgId(), "texture2");
+    glUniform1i(id, 2);
+
+
+    //     glActiveTexture(GL_TEXTURE0 + i);
+    //     glBindTexture(GL_TEXTURE_2D, textures[k]);
+    //     GLuint id = glGetUniformLocation(prog_id, "eyePos");
+    //     glUniform1i(uniform, textures[k]);
 
     glBindBuffer(GL_ARRAY_BUFFER, geom.GetVertBufId());
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geom.GetIndBufId());

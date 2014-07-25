@@ -16,8 +16,11 @@ GLFWwindow* window;
 #include <glm/gtc/matrix_transform.hpp>
 using namespace glm;
 
-#define VSHADERPATH "shaders/bump.vert"
-#define FSHADERPATH "shaders/bump.frag"
+// #define VSHADERPATH "shaders/bump.vert"
+// #define FSHADERPATH "shaders/bump.frag"
+
+#define VSHADERPATH "shaders/parallax.vert"
+#define FSHADERPATH "shaders/parallax.frag"
 
 // #define VSHADERPATH "shaders/lambert_blinn_phong.vert"
 // #define FSHADERPATH "shaders/lambert_blinn_phong.frag"
@@ -25,8 +28,16 @@ using namespace glm;
 // #define TEXPATH "textures/wall_512_1_05.tga"
 
 // #define TEXPATH "textures/coin1.jpg"
-#define TEXPATH "textures/coin2.png"
+// #define TEXPATH "textures/coin2.png"
 // #define TEXPATH "textures/metal.png"
+
+#define TEXPATH  "textures/chess.png"
+#define TEXPATH1 "textures/chess_nrm.png"
+#define TEXPATH2 "textures/chess_disp.png"
+
+// #define TEXPATH  "textures/brick.jpg"
+// #define TEXPATH1 "textures/brick_nrm.png"
+// #define TEXPATH2 "textures/brick_disp.png"
 
 #define ROTANGLE   1.0f
 
@@ -86,7 +97,11 @@ int main(void)
 
     // MyObject obj(rect, my_material);
     MyObject obj("cube", cube, my_material);
-    obj.SetTexture(TEXPATH);
+    // obj.SetTexture(TEXPATH);
+
+    obj.AddTexture(TEXPATH);
+    obj.AddTexture(TEXPATH1);
+    obj.AddTexture(TEXPATH2);
 
     Renderer render;
 
@@ -106,51 +121,51 @@ int main(void)
         // double delta_time = cur_time - last_time;
         // last_time = cur_time;
 
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
             // render.CameraMoveLeft();
             render.ObjRotateLeft("cube");
-	}
+        }
 
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
+        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
             render.ObjRotateRight("cube");
-	}
+        }
 
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
+        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
             render.ObjRotateUp("cube");
-	}
+        }
 
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
+        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
             render.ObjRotateDown("cube");
-	}
+        }
 
         if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS){
             render.ResetCamera();
             render.ObjResetRotationMatrix("cube");
-	}
+        }
 
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
             render.CameraMoveForward();
-	}
+        }
 
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
             render.CameraMoveLeft();
-	}
+        }
 
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
             render.CameraMoveBackward();
-	}
+        }
 
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
             render.CameraMoveRight();
-	}
+        }
 
         if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS){
             render.CameraMoveUp();
-	}
+        }
 
         if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS){
             render.CameraMoveDown();
-	}
+        }
 
         render.SetTime(cur_time);
         render.Render();
