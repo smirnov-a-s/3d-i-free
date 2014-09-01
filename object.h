@@ -6,7 +6,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-using namespace glm;
+// using namespace glm;
 
 #include "geometry.h"
 #include "material.h"

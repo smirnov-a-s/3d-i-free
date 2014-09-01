@@ -46,7 +46,7 @@ void Renderer::SetCamera(const glm::mat4& view_matrix, const glm::mat4& project_
 
 void Renderer::CameraMoveLeft()
 {
-    rotation_matrix = glm::rotate(glm::mat4(1.0f), -ROTANGLE, vec3(0.0f, 1.0f, 0.0f));
+    rotation_matrix = glm::rotate(glm::mat4(1.0f), -ROTANGLE, glm::vec3(0.0f, 1.0f, 0.0f));
     glm::vec4 tmp = glm::vec4(camera_pos, 1.0f);
     tmp = tmp * rotation_matrix;
     camera_pos = glm::vec3(tmp);
@@ -55,7 +55,7 @@ void Renderer::CameraMoveLeft()
 
 void Renderer::CameraMoveRight()
 {
-    rotation_matrix = glm::rotate(glm::mat4(1.0f), ROTANGLE, vec3(0.0f, 1.0f, 0.0f));
+    rotation_matrix = glm::rotate(glm::mat4(1.0f), ROTANGLE, glm::vec3(0.0f, 1.0f, 0.0f));
     glm::vec4 tmp = glm::vec4(camera_pos, 1.0f);
     tmp = tmp * rotation_matrix;
     camera_pos = glm::vec3(tmp);
