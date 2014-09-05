@@ -4,12 +4,26 @@
 #define BUFFER_OFFSET(x) ((const void*) (x))
 
 MyObject::MyObject(const char* name, const Geometry& geom, const Material& mater) :
-    name(name), geom(geom), mater(mater)
+        name(name), geom(geom), mater(mater)
 {
     translation_matrix = glm::mat4(1.0f);
     rotation_matrix = glm::mat4(1.0f);
     scale_matrix = glm::mat4(1.0f);
     model_matrix = glm::mat4(1.0f);
+
+    my_translation_matrix = MyMath::Mat4(1.0f);
+    my_rotation_matrix = MyMath::Mat4(1.0f);
+    my_scale_matrix = MyMath::Mat4(1.0f);
+    my_model_matrix = MyMath::Mat4(1.0f);
+
+    // MyMath::print_mat(translation_matrix);
+    // MyMath::print_mat(rotation_matrix);
+    // MyMath::print_mat(scale_matrix);
+    // MyMath::print_mat(model_matrix);
+    // MyMath::print_mat(my_translation_matrix);
+    // MyMath::print_mat(my_rotation_matrix);
+    // MyMath::print_mat(my_scale_matrix);
+    // MyMath::print_mat(my_model_matrix);
 
     x_rot_ang = 0.0f;
     y_rot_ang = 0.0f;
@@ -141,55 +155,35 @@ void MyObject::AddTexture(const char* path)
 void MyObject::Translate(float tx, float ty, float tz)
 {
     translation_matrix = glm::translate(translation_matrix, glm::vec3(tx, ty, tz));
+    my_translation_matrix = MyMath::Translate(tx, ty, tz);
 }
 
 void MyObject::Rotate(float angle_in_degr, RotationAxis &axis)
 {
     switch (axis) {
-    case RotationAxis::X:
-    {
-        // glm::vec4 tmp = rotation_matrix * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
-        // tmp = glm::normalize(tmp);
-        rotation_matrix = glm::rotate(rotation_matrix, angle_in_degr, glm::vec3(1.0f, 0.0f, 0.0f));
-    }
-    break;
-    case RotationAxis::Y:
-    {
-        // rotation_matrix = glm::mat4(1.0f);
-
-        // y_rot_ang += angle_in_degr;
-        // if (abs(y_rot_ang) >= 90.0f) {
-        //     y_rot_ang = 0.0f;
-        // }
-
-        // printf("%f\n", &rotation_matrix[0][0]);
-        // printf("%f\n", y_rot_ang);
-
-        // glm::vec4 tmp = rotation_matrix * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
-        // tmp = glm::normalize(tmp);
-
-        // float p = glm::dot(vec3(tmp), vec3(1.0f, 0.0f, 0.0f));
-        // printf("%f\n", p);
-        // if (p - 0.0000001 < 0.0f) {
-        //     printf("%f\n", p);
-        //     rotation_matrix = glm::mat4(1.0f);
-        // }
-
-        rotation_matrix = glm::rotate(rotation_matrix, angle_in_degr, glm::vec3(0.0f, 1.0f, 0.0f));
-    }
-    break;
-    case RotationAxis::Z:
-    {
-        rotation_matrix = glm::rotate(rotation_matrix, angle_in_degr, glm::vec3(0.0f, 0.0f, 1.0f));
-    }
-    break;
+        case RotationAxis::X:
+            {
+                rotation_matrix = glm::rotate(rotation_matrix, angle_in_degr, glm::vec3(1.0f, 0.0f, 0.0f));
+                my_rotation_matrix = MyMath::RotateX(angle_in_degr);
+            }
+            break;
+        case RotationAxis::Y:
+            {
+                rotation_matrix = glm::rotate(rotation_matrix, angle_in_degr, glm::vec3(0.0f, 1.0f, 0.0f));
+                my_rotation_matrix = MyMath::RotateX(angle_in_degr);
+            }
+            break;
+        case RotationAxis::Z:
+            {
+                rotation_matrix = glm::rotate(rotation_matrix, angle_in_degr, glm::vec3(0.0f, 0.0f, 1.0f));
+                my_rotation_matrix = MyMath::RotateX(angle_in_degr);
+            }
+            break;
     }
 }
 
 void MyObject::Rotate(float angle_in_degr, glm::vec3& axis)
 {
-    // glm::vec4 tmp = view * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
-
     rotation_matrix = glm::rotate(rotation_matrix, angle_in_degr, axis);
 }
 
@@ -197,6 +191,7 @@ void MyObject::Rotate(float angle_in_degr, glm::vec3& axis)
 void MyObject::Scale(float sx, float sy, float sz)
 {
     scale_matrix = glm::scale(translation_matrix, glm::vec3(sx, sy, sz));
+    my_scale_matrix = MyMath::Scale(sx, sy, sz);
 }
 
 // uniforms?
@@ -238,7 +233,10 @@ void MyObject::Draw()
     GLuint model_matrix_id = glGetUniformLocation(mater.GetProgId(), "modelMatrix");
     model_matrix = translation_matrix * rotation_matrix * scale_matrix;
 
+    my_model_matrix = my_translation_matrix * my_rotation_matrix * my_scale_matrix;
+
     glUniformMatrix4fv(model_matrix_id, 1, GL_FALSE, &model_matrix[0][0]);
+    // glUniformMatrix4fv(model_matrix_id, 1, GL_FALSE, my_model_matrix[0]);
 
     glDrawElements(GL_TRIANGLES, geom.GetIndBufSize(), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 }

@@ -122,7 +122,6 @@ int main(void)
         // last_time = cur_time;
 
         if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-            // render.CameraMoveLeft();
             render.ObjRotateLeft("cube");
         }
 

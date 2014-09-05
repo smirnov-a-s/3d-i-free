@@ -9,17 +9,28 @@
 Renderer::Renderer()
 {
     camera_pos = glm::vec3(0.0f, 0.0f, 5.0f);
-
     camera_look_at = glm::vec3(0.0f, 0.0f, 0.0f);
     camera_head = glm::vec3(0.0f, 1.0f, 0.0f);
 
+    my_camera_pos = MyMath::Vec3(0.0f, 0.0f, 5.0f);
+    my_camera_look_at = MyMath::Vec3(0.0f, 0.0f, 0.0f);
+    my_camera_head = MyMath::Vec3(0.0f, 1.0f, 0.0f);
+
     rotation_matrix = glm::mat4(1.0f);
+    my_rotation_matrix = MyMath::Mat4(1.0f);
     y_rot_angle = 0.0f;
 
     view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
     project_matrix = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
 
+    my_view_matrix = MyMath::LookAt(my_camera_pos, my_camera_look_at, my_camera_head);
+    my_project_matrix = MyMath::Perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
+
     light_pos = glm::vec3(0.0f, 0.0f, 5.0f);
+    my_light_pos = MyMath::Vec3(0.0f, 0.0f, 5.0f);
+
+    MyMath::print_mat(view_matrix);
+    MyMath::print_mat(my_view_matrix);
 
     cur_time = 0;
     delta_time = 0;
@@ -36,12 +47,28 @@ void Renderer::ResetCamera()
 
     view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
     project_matrix = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
+
+    my_camera_pos = MyMath::Vec3(0.0f, 0.0f, 5.0f);
+
+    my_camera_look_at = MyMath::Vec3(0.0f, 0.0f, 0.0f);
+    my_camera_head = MyMath::Vec3(0.0f, 1.0f, 0.0f);
+
+    my_rotation_matrix = MyMath::Mat4(1.0f);
+
+    my_view_matrix = MyMath::LookAt(my_camera_pos, my_camera_look_at, my_camera_head);
+    my_project_matrix = MyMath::Perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
 }
 
 void Renderer::SetCamera(const glm::mat4& view_matrix, const glm::mat4& project_matrix)
 {
     this->view_matrix = view_matrix;
     this->project_matrix = project_matrix;
+}
+
+void Renderer::SetCamera(const MyMath::Mat4 &view_matrix, const MyMath::Mat4 &project_matrix)
+{
+    this->my_view_matrix = my_view_matrix;
+    this->my_project_matrix = my_project_matrix;
 }
 
 void Renderer::CameraMoveLeft()
@@ -51,6 +78,8 @@ void Renderer::CameraMoveLeft()
     tmp = tmp * rotation_matrix;
     camera_pos = glm::vec3(tmp);
     view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
+
+    // my_rotation_matrix =
 }
 
 void Renderer::CameraMoveRight()
@@ -93,6 +122,10 @@ void Renderer::SetLightPos(float x, float y, float z)
     light_pos.x = x;
     light_pos.y = y;
     light_pos.z = z;
+
+    my_light_pos.x = x;
+    my_light_pos.y = y;
+    my_light_pos.z = z;
 }
 
 void Renderer::SetEyePos(float x, float y, float z)
@@ -102,6 +135,12 @@ void Renderer::SetEyePos(float x, float y, float z)
     camera_pos.z = z;
 
     view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
+
+    my_camera_pos.x = x;
+    my_camera_pos.y = y;
+    my_camera_pos.z = z;
+
+    my_view_matrix = MyMath::LookAt(my_camera_pos, my_camera_look_at, my_camera_head);
 }
 
 void Renderer::SetTime(double time)
@@ -129,22 +168,25 @@ void Renderer::AddObject(const MyObject &obj)
 // uniform mat4 lightPos;
 // uniform mat4 eyePos;
 
-void Renderer::ObjRotateLeft(const char *name)
-{
-    for (auto &o : objects) {
-        if (strcmp(name, o.GetName()) == 0) {
-            RotationAxis axis = RotationAxis::Y;
-            o.Rotate(-ROTANGLE, axis);
-        }
-    }
-}
-
 void Renderer::ObjResetRotationMatrix(const char *name)
 {
     for (auto &o : objects) {
         if (strcmp(name, o.GetName()) == 0) {
             glm::mat4 tmp = glm::mat4(1.0f);
             o.SetRotationMatrix(tmp);
+
+            MyMath::Mat4 idnt = MyMath::Mat4(1.0f);
+            o.SetRotationMatrix(idnt);
+        }
+    }
+}
+
+void Renderer::ObjRotateLeft(const char *name)
+{
+    for (auto &o : objects) {
+        if (strcmp(name, o.GetName()) == 0) {
+            RotationAxis axis = RotationAxis::Y;
+            o.Rotate(-ROTANGLE, axis);
         }
     }
 }
@@ -192,11 +234,23 @@ void Renderer::Render()
 
         glUniform1f(time_id, cur_time);
 
-        glUniformMatrix4fv(view_matrix_id, 1, GL_FALSE, &view_matrix[0][0]);
-        glUniformMatrix4fv(proj_matrix_id, 1, GL_FALSE, &project_matrix[0][0]);
+        MyMath::print_mat(view_matrix);
+        MyMath::print_mat(my_view_matrix);
 
-        glUniform3fv(light_pos_id, 1, &light_pos[0]);
-        glUniform3fv(eye_pos_id, 1, &camera_pos[0]);
+        MyMath::print_mat(project_matrix);
+        MyMath::print_mat(my_project_matrix);
+
+        // glUniformMatrix4fv(view_matrix_id, 1, GL_FALSE, &view_matrix[0][0]);
+        // glUniformMatrix4fv(proj_matrix_id, 1, GL_FALSE, &project_matrix[0][0]);
+
+        glUniformMatrix4fv(view_matrix_id, 1, GL_FALSE, my_view_matrix[0]);
+        glUniformMatrix4fv(proj_matrix_id, 1, GL_FALSE, my_project_matrix[0]);
+
+        // glUniform3fv(light_pos_id, 1, &light_pos[0]);
+        // glUniform3fv(eye_pos_id, 1, &camera_pos[0]);
+
+        glUniform3fv(light_pos_id, 1, (float*) &my_light_pos);
+        glUniform3fv(eye_pos_id, 1, (float*) &my_camera_pos);
 
         o.Draw();
     }

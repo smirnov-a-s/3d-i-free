@@ -6,7 +6,8 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-// using namespace glm;
+
+#include "math_utils.h"
 
 #include "geometry.h"
 #include "material.h"
@@ -28,6 +29,11 @@ class MyObject {
     glm::mat4 rotation_matrix;
     glm::mat4 scale_matrix;
     glm::mat4 model_matrix;
+
+    MyMath::Mat4 my_translation_matrix;
+    MyMath::Mat4 my_rotation_matrix;
+    MyMath::Mat4 my_scale_matrix;
+    MyMath::Mat4 my_model_matrix;
 
     // change to horizontal/vertical?
     float x_rot_ang;
@@ -52,6 +58,7 @@ public:
 
     // void SetModelMatrix(glm::mat4& model_matrix) { this->model_matrix = model_matrix; }
     void SetRotationMatrix(glm::mat4& rotation_matrix) { this->rotation_matrix = rotation_matrix; }
+    void SetRotationMatrix(MyMath::Mat4& rotation_matrix) { this->my_rotation_matrix = rotation_matrix; }
 
     void Draw();
 };
