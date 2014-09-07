@@ -4,8 +4,9 @@
 #include "renderer.h"
 
 #define MOVECAMERA 0.1f
-#define OBJMOVESPEED   1.0f
-#define CAMMOVESPEED   1.0f
+// #define OBJMOVESPEED   1.0f
+#define OBJMOVESPEED   45.0f
+#define CAMMOVESPEED   45.0f
 
 Renderer::Renderer()
 {
@@ -80,9 +81,10 @@ void Renderer::CameraMoveLeft()
     camera_pos = glm::vec3(tmp);
     view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
 
-    float speed = delta_time * CAMMOVESPEED;
-    printf("speed = %f\n", speed);
-    my_rotation_matrix = MyMath::RotateY(-speed);
+    // printf("delta_time = %f\n", delta_time);
+    float angle = delta_time * CAMMOVESPEED * (float) M_PI / 180.0f;
+    // printf("speed = %f\n", speed);
+    my_rotation_matrix = MyMath::RotateY(-angle);
     MyMath::Vec4 my_tmp = MyMath::Vec4(my_camera_pos, 1.0f);
     my_tmp = my_rotation_matrix * my_tmp;
     my_camera_pos = MyMath::Vec3(my_tmp);
@@ -97,8 +99,8 @@ void Renderer::CameraMoveRight()
     camera_pos = glm::vec3(tmp);
     view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
 
-    float speed = delta_time * CAMMOVESPEED;
-    my_rotation_matrix = MyMath::RotateY(speed);
+    float angle = delta_time * CAMMOVESPEED * (float) M_PI / 180.0f;
+    my_rotation_matrix = MyMath::RotateY(angle);
     MyMath::Vec4 my_tmp = MyMath::Vec4(my_camera_pos, 1.0f);
     my_tmp = my_rotation_matrix * my_tmp;
     my_camera_pos = MyMath::Vec3(my_tmp);
@@ -214,7 +216,10 @@ void Renderer::ObjRotateLeft(const char *name)
     for (auto &o : objects) {
         if (strcmp(name, o.GetName()) == 0) {
             RotationAxis axis = RotationAxis::Y;
-            o.Rotate(-OBJMOVESPEED, axis);
+            // float angle = delta_time * OBJMOVESPEED * (float) M_PI / 180.0f;
+            float angle = delta_time * OBJMOVESPEED;
+            o.Rotate(-angle, axis);
+            // o.Rotate(-OBJMOVESPEED, axis);
         }
     }
 }
@@ -224,7 +229,9 @@ void Renderer::ObjRotateRight(const char *name)
     for (auto &o : objects) {
         if (strcmp(name, o.GetName()) == 0) {
             RotationAxis axis = RotationAxis::Y;
-            o.Rotate(OBJMOVESPEED, axis);
+            float angle = delta_time * OBJMOVESPEED;
+            o.Rotate(angle, axis);
+            // o.Rotate(OBJMOVESPEED, axis);
         }
     }
 }
