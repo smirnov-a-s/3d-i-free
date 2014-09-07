@@ -44,7 +44,7 @@ public:
 
     void Render();
 
-    // moving is wrong (but it moves)
+    // moving is a bit weird(but it moves)
     void ResetCamera();
     void CameraMoveLeft();
     void CameraMoveRight();

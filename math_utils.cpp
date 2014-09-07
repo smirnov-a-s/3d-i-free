@@ -252,24 +252,6 @@ Mat4 Perspective(float fov, float aspect, float near, float far)
 
 Mat4 LookAt(Vec3& eye, Vec3& center, Vec3& up)
 {
-    // detail::tvec3<T, P> f(normalize(center - eye));
-    // detail::tvec3<T, P> s(normalize(cross(f, up)));
-    // detail::tvec3<T, P> u(cross(s, f));
-
-    // detail::tmat4x4<T, P> Result(1);
-    // Result[0][0] = s.x;
-    // Result[1][0] = s.y;
-    // Result[2][0] = s.z;
-    // Result[0][1] = u.x;
-    // Result[1][1] = u.y;
-    // Result[2][1] = u.z;
-    // Result[0][2] =-f.x;
-    // Result[1][2] =-f.y;
-    // Result[2][2] =-f.z;
-    // Result[3][0] =-dot(s, eye);
-    // Result[3][1] =-dot(u, eye);
-    // Result[3][2] = dot(f, eye);
-
     Mat4 m;
 
     Vec3 f;
@@ -297,35 +279,6 @@ Mat4 LookAt(Vec3& eye, Vec3& center, Vec3& up)
     m[3][1] =-Dot(u, eye);
     m[3][2] = Dot(f, eye);
     m[3][3] = 1.0f;
-
-    // Vec3 x;
-    // Vec3 y;
-    // Vec3 z;
-
-    // z = eye - center;
-    // z = Normalize(z);
-    // y = up;
-    // x = Cross(y, z);
-    // y = Cross(z, x);
-    // x = Normalize(x);
-    // y = Normalize(y);
-
-    // m[0][0] = x.x;
-    // m[1][0] = x.y;
-    // m[2][0] = x.z;
-    // m[3][0] = -Dot(x, eye);
-    // m[0][1] = y.x;
-    // m[1][1] = y.y;
-    // m[2][1] = y.z;
-    // m[3][1] = -Dot(y, eye);
-    // m[0][2] = z.x;
-    // m[1][2] = z.y;
-    // m[2][2] = z.z;
-    // m[3][2] = -Dot(z, eye);
-    // m[0][3] = 0.0f;
-    // m[1][3] = 0.0f;
-    // m[2][3] = 0.0f;
-    // m[3][3] = 1.0f;
 
     return m;
 }

@@ -4,9 +4,8 @@
 #include "renderer.h"
 
 #define MOVECAMERA 0.1f
-#define ROTANGLE   1.0f
-
-#define ROTCAM     0.025f
+#define OBJMOVESPEED   1.0f
+#define CAMMOVESPEED   1.0f
 
 Renderer::Renderer()
 {
@@ -75,13 +74,15 @@ void Renderer::SetCamera(const MyMath::Mat4 &view_matrix, const MyMath::Mat4 &pr
 
 void Renderer::CameraMoveLeft()
 {
-    rotation_matrix = glm::rotate(glm::mat4(1.0f), -ROTANGLE, glm::vec3(0.0f, 1.0f, 0.0f));
+    rotation_matrix = glm::rotate(glm::mat4(1.0f), -OBJMOVESPEED, glm::vec3(0.0f, 1.0f, 0.0f));
     glm::vec4 tmp = glm::vec4(camera_pos, 1.0f);
     tmp = tmp * rotation_matrix;
     camera_pos = glm::vec3(tmp);
     view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
 
-    my_rotation_matrix = MyMath::RotateY(-ROTCAM);
+    float speed = delta_time * CAMMOVESPEED;
+    printf("speed = %f\n", speed);
+    my_rotation_matrix = MyMath::RotateY(-speed);
     MyMath::Vec4 my_tmp = MyMath::Vec4(my_camera_pos, 1.0f);
     my_tmp = my_rotation_matrix * my_tmp;
     my_camera_pos = MyMath::Vec3(my_tmp);
@@ -90,13 +91,14 @@ void Renderer::CameraMoveLeft()
 
 void Renderer::CameraMoveRight()
 {
-    rotation_matrix = glm::rotate(glm::mat4(1.0f), ROTANGLE, glm::vec3(0.0f, 1.0f, 0.0f));
+    rotation_matrix = glm::rotate(glm::mat4(1.0f), OBJMOVESPEED, glm::vec3(0.0f, 1.0f, 0.0f));
     glm::vec4 tmp = glm::vec4(camera_pos, 1.0f);
     tmp = tmp * rotation_matrix;
     camera_pos = glm::vec3(tmp);
     view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
 
-    my_rotation_matrix = MyMath::RotateY(ROTCAM);
+    float speed = delta_time * CAMMOVESPEED;
+    my_rotation_matrix = MyMath::RotateY(speed);
     MyMath::Vec4 my_tmp = MyMath::Vec4(my_camera_pos, 1.0f);
     my_tmp = my_rotation_matrix * my_tmp;
     my_camera_pos = MyMath::Vec3(my_tmp);
@@ -212,7 +214,7 @@ void Renderer::ObjRotateLeft(const char *name)
     for (auto &o : objects) {
         if (strcmp(name, o.GetName()) == 0) {
             RotationAxis axis = RotationAxis::Y;
-            o.Rotate(-ROTANGLE, axis);
+            o.Rotate(-OBJMOVESPEED, axis);
         }
     }
 }
@@ -222,7 +224,7 @@ void Renderer::ObjRotateRight(const char *name)
     for (auto &o : objects) {
         if (strcmp(name, o.GetName()) == 0) {
             RotationAxis axis = RotationAxis::Y;
-            o.Rotate(ROTANGLE, axis);
+            o.Rotate(OBJMOVESPEED, axis);
         }
     }
 }
@@ -232,7 +234,7 @@ void Renderer::ObjRotateUp(const char *name)
     for (auto &o : objects) {
         if (strcmp(name, o.GetName()) == 0) {
             RotationAxis axis = RotationAxis::X;
-            o.Rotate(-ROTANGLE, axis);
+            o.Rotate(-OBJMOVESPEED, axis);
         }
     }
 }
@@ -242,7 +244,7 @@ void Renderer::ObjRotateDown(const char *name)
     for (auto &o : objects) {
         if (strcmp(name, o.GetName()) == 0) {
             RotationAxis axis = RotationAxis::X;
-            o.Rotate(ROTANGLE, axis);
+            o.Rotate(OBJMOVESPEED, axis);
         }
     }
 }
@@ -260,11 +262,11 @@ void Renderer::Render()
 
         glUniform1f(time_id, cur_time);
 
-        MyMath::print_mat(view_matrix);
-        MyMath::print_mat(my_view_matrix);
+        // MyMath::print_mat(view_matrix);
+        // MyMath::print_mat(my_view_matrix);
 
-        MyMath::print_mat(project_matrix);
-        MyMath::print_mat(my_project_matrix);
+        // MyMath::print_mat(project_matrix);
+        // MyMath::print_mat(my_project_matrix);
 
         // glUniformMatrix4fv(view_matrix_id, 1, GL_FALSE, &view_matrix[0][0]);
         // glUniformMatrix4fv(proj_matrix_id, 1, GL_FALSE, &project_matrix[0][0]);
