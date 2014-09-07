@@ -6,6 +6,8 @@
 #define MOVECAMERA 0.1f
 #define ROTANGLE   1.0f
 
+#define ROTCAM     0.025f
+
 Renderer::Renderer()
 {
     camera_pos = glm::vec3(0.0f, 0.0f, 5.0f);
@@ -79,7 +81,11 @@ void Renderer::CameraMoveLeft()
     camera_pos = glm::vec3(tmp);
     view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
 
-    // my_rotation_matrix =
+    my_rotation_matrix = MyMath::RotateY(-ROTCAM);
+    MyMath::Vec4 my_tmp = MyMath::Vec4(my_camera_pos, 1.0f);
+    my_tmp = my_rotation_matrix * my_tmp;
+    my_camera_pos = MyMath::Vec3(my_tmp);
+    my_view_matrix = MyMath::LookAt(my_camera_pos, my_camera_look_at, my_camera_head);
 }
 
 void Renderer::CameraMoveRight()
@@ -89,6 +95,12 @@ void Renderer::CameraMoveRight()
     tmp = tmp * rotation_matrix;
     camera_pos = glm::vec3(tmp);
     view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
+
+    my_rotation_matrix = MyMath::RotateY(ROTCAM);
+    MyMath::Vec4 my_tmp = MyMath::Vec4(my_camera_pos, 1.0f);
+    my_tmp = my_rotation_matrix * my_tmp;
+    my_camera_pos = MyMath::Vec3(my_tmp);
+    my_view_matrix = MyMath::LookAt(my_camera_pos, my_camera_look_at, my_camera_head);
 }
 
 void Renderer::CameraMoveUp()
@@ -96,6 +108,10 @@ void Renderer::CameraMoveUp()
     if (camera_pos.y >= -10.0f)
         camera_pos.y -= MOVECAMERA;
     view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
+
+    if (my_camera_pos.y >= -10.0f)
+        my_camera_pos.y -= MOVECAMERA;
+    my_view_matrix = MyMath::LookAt(my_camera_pos, my_camera_look_at, my_camera_head);
 }
 
 void Renderer::CameraMoveDown()
@@ -103,18 +119,28 @@ void Renderer::CameraMoveDown()
     if (camera_pos.y <= 10.0f)
         camera_pos.y += MOVECAMERA;
     view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
+
+    if (my_camera_pos.y <= 10.0f)
+        my_camera_pos.y += MOVECAMERA;
+    my_view_matrix = MyMath::LookAt(my_camera_pos, my_camera_look_at, my_camera_head);
 }
 
 void Renderer::CameraMoveForward()
 {
     camera_pos.z -= MOVECAMERA;
     view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
+
+    my_camera_pos.z -= MOVECAMERA;
+    my_view_matrix = MyMath::LookAt(my_camera_pos, my_camera_look_at, my_camera_head);
 }
 
 void Renderer::CameraMoveBackward()
 {
     camera_pos.z += MOVECAMERA;
     view_matrix = glm::lookAt(camera_pos, camera_look_at, camera_head);
+
+    my_camera_pos.z += MOVECAMERA;
+    my_view_matrix = MyMath::LookAt(my_camera_pos, my_camera_look_at, my_camera_head);
 }
 
 void Renderer::SetLightPos(float x, float y, float z)

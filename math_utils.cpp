@@ -32,6 +32,8 @@ float Dot(const Vec2& v1, const Vec2& v2)
     return v1.x * v2.x + v1.y * v2.y;
 }
 
+Vec3::Vec3(Vec4& v) : x(v.x), y(v.y), z(v.z) {}
+
 Vec3 operator-(Vec3 v)
 {
     return {-v.x, -v.y, -v.z};

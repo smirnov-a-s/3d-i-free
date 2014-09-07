@@ -35,6 +35,8 @@ Vec2 operator/(Vec2 v, float c);
 
 float Dot(const Vec2& v1, const Vec2& v2);
 
+class Vec4;
+
 class Vec3 {
   public:
     float x;
@@ -43,6 +45,7 @@ class Vec3 {
 
     Vec3() { x = 0; y = 0; z = 0; }
     Vec3(float x, float y, float z) : x(x), y(y), z(z) {}
+    Vec3(Vec4& v);
 
     Vec3& operator+=(Vec3 v) { x += v.x; y += v.y; z += v.z; return *this; }
     Vec3& operator-=(Vec3 v) { x -= v.x; y -= v.y; z -= v.z; return *this; }
@@ -73,6 +76,7 @@ class Vec4 {
 
     Vec4() { x = 0; y = 0; z = 0; w = 0; }
     Vec4(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
+    Vec4(Vec3& v, float w) : x(v.x), y(v.y), z(v.z), w(w) {}
 
     Vec4& operator+=(Vec4 v) { x += v.x; y += v.y; z += v.z; w += v.w; return *this; }
     Vec4& operator-=(Vec4 v) { x -= v.x; y -= v.y; z += v.z; w += v.w; return *this; }

@@ -170,13 +170,13 @@ void MyObject::Rotate(float angle_in_degr, RotationAxis &axis)
         case RotationAxis::Y:
             {
                 rotation_matrix = glm::rotate(rotation_matrix, angle_in_degr, glm::vec3(0.0f, 1.0f, 0.0f));
-                my_rotation_matrix = MyMath::RotateX(angle_in_degr);
+                my_rotation_matrix = MyMath::RotateY(angle_in_degr);
             }
             break;
         case RotationAxis::Z:
             {
                 rotation_matrix = glm::rotate(rotation_matrix, angle_in_degr, glm::vec3(0.0f, 0.0f, 1.0f));
-                my_rotation_matrix = MyMath::RotateX(angle_in_degr);
+                my_rotation_matrix = MyMath::RotateZ(angle_in_degr);
             }
             break;
     }

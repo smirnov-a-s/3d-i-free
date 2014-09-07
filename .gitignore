@@ -1,1 +1,8 @@
 *.o
+math_utils/Makefile
+math_utils/main.cpp
+math_utils/math_utils.cpp
+math_utils/math_utils.h
+.clang_complete
+main
+math_utils/main
