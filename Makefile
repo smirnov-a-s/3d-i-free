@@ -1,4 +1,4 @@
-OBJDIR = obj
+OBJDIR = objj
 SOURCES = $(wildcard *.cpp)
 OBJECTS = $(SOURCES:%.cpp=$(OBJDIR)/%.o)
 
